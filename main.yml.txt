@@ -3,11 +3,11 @@
     hosts:sample
     sudo: yes
     tasks:
-       - file: path=~/programmes/ruby state=directory
-       - copy: src=../../programmefile/ruby/install.sh dest=~/programmes/ruby/rvminstallruby.sh mode=775
+       - file: path=~/programmes/ruby state=directory # creating a directory.
+       - copy: src=../../programmefile/ruby/install.sh dest=~/programmes/ruby/rvminstallruby.sh mode=775 #copying script to server
 
        - name: Latest Ruby is installed
-         shell: /usr/bin/env bash ~/programes/ruby/rvminstallruby.sh
+         shell: /usr/bin/env bash ~/programmes/ruby/rvminstallruby.sh 
         
        - name: Update repo cache and install bundler
          apt:
