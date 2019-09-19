@@ -31,16 +31,16 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 24.45.56.23/34
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 24.45.56.23/34
+          CidrIp: 23.24.25.23/22  # please give ur host ip
         SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 24.45.56.23/34
+          CidrIp: 0.0.0.0/0
 
   testnic0:
     Properties:
@@ -55,7 +55,7 @@ Resources:
     Type: 'AWS::EC2::NetworkInterface'
   test:
     Properties:
-      KeyName: mykey
+      KeyName: mykey     # use your key
       ImageId: !Ref ImageId
       InstanceType: t2.micro
     
