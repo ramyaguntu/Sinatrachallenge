@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: EC2 Instances for testing
+
+Parameters:
+
+  ImageId:
+    Type: String
+    Description: AMI Id
+    Default: ami-0edcec072887c2caa
+
+  ShortBusinessServiceCI:
+    Type: String
+    Default: test
+
+Mappings:
+
+  Subnets:
+    Private:
+      A: subnet-03ea85f7443daf6a7
+      B: subnet-0785a977024aec7e7
+      C: subnet-0998b21ffd55bdf1f
+
+Resources:
+  
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+        GroupDescription: Allow http  and ssh to client host
+        VpcId: vpc-03dac9a4c4a040f04
+        SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  testnic0:
+    Properties:
+      SubnetId: !FindInMap [ Subnets, Private, A]
+      GroupSet:
+        - !Ref InstanceSecurityGroup
+        
+        
+      Tags:
+        - Key: Name
+          Value: aws-test-nic0
+    Type: 'AWS::EC2::NetworkInterface'
+  test:
+    Properties:
+      KeyName: mykey
+      ImageId: !Ref ImageId
+      InstanceType: t2.micro
+    
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            DeleteOnTermination: true
+            VolumeSize: 10
+        - DeviceName: /dev/sdb
+          Ebs:
+            VolumeType: gp2
+            DeleteOnTermination: true
+            VolumeSize: 10
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref testnic0
+          DeleteOnTermination: false
+          DeviceIndex: 0
+          Description: >-
+            eni for test ec2 instance
+      Tags:
+        - Key: Name
+          Value: aws-test-ec2
+        - Key: SecurityTierClass
+          Value: application
+        - Key: SecurityTierClass
+          Value: application
+        - Key: SecurityTierName
+          Value: testapp
+      DisableApiTermination: false
+      InstanceInitiatedShutdownBehavior: stop
+    Type: 'AWS::EC2::Instance'
